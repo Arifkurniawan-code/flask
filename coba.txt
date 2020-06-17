@@ -1,0 +1,1 @@
+pip install flask pysqlite3 numpy pandas scikit-learn tensorflow Keras matplotlib re2 Sastrawi selenium gunicorn sklearn

@@ -1,0 +1,92 @@
+{% extends 'base_admin.html' %}
+
+{% block head %}
+<title>Riwayat</title>
+{% endblock %}
+
+{% block body %}
+<div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h3 class="mt-4" align="center">Riwayat Uji Komentar</h3>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                <div class="card-header"><i class="fas fa-table mr-1"></i>Tabel Uji Komentar</div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>Komentar</th>
+                                                <th>Score</th>
+                                            </tr>
+                                            </thead>
+                                            <tfoot>
+                                            <tr>
+                                                <th>Komentar</th>
+                                                <th>Score</th>
+                                            </tr>
+                                            </tfoot>
+                                            <tbody>
+                                            {% for item in item1 %}
+                                            <tr>
+                                                <td>{{item[1]}}</td>
+                                                <td>{{item[2]}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                <div class="card-header"><i class="fas fa-table mr-1"></i>Tabel Uji Postingan</div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>URL</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tfoot>
+                                            <tr>
+                                                <th>URL</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </tfoot>
+                                            <tbody>
+                                            {% for item in item2 %}
+                                            <tr>
+                                                <td><a href="{{item[1]}}">{{item[1]}}</a></td>
+                                                <td><a class="btn btn-primary" href="/hasil_postingan?url={{item[1]}}">Lihat Hasil</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2019</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base_admin.html' %}
+
+{% block head %}
+<title>Home Admin</title>
+<script>
+    function validateform(){
+    var name=document.myform.username.value;
+    var password=document.myform.password.value;
+
+    if (name==null || name==""){
+      alert("Username tidak boleh kosong");
+      return false;
+    }else if(password.length<6){
+      alert("Password minimal berisikan 6 huruf");
+      return false;
+      }
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h3 class="mt-4">Selamat datang {{session['username']}}</h3>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Home</li>
+                        </ol>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div>
+                                    <img src="{{url_for('static', filename='images/profil.PNG')}}" align="middle" width="100%" height="100%" alt="Grafik Akurasi">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-file mr-1"></i>Perbarui Profile</div>
+                                    <form name="myform" action="/bot_instagram?id=1" method="post" onsubmit="return validateform()">
+                                          <div class="form-row">
+                                              <div class="col-mb-2"></div>
+                                                <div class="form-group col-md-10">
+                                                  <label for="username" >Username</label>
+                                                  <input type="text" class="form-control" name="username" id="username" placeholder="username" align="right">
+                                                </div>
+                                          </div>
+                                          <div class="form-row">
+                                              <div class="col-mb-2"></div>
+                                                 <div class="form-group col-md-10">
+                                                  <label for="password" >Password</label>
+                                                  <input type="Password" class="form-control" name="password" id="password" placeholder="password" align="right">
+                                                </div>
+                                          </div>
+                                        {%with messages=get_flashed_messages(with_categories=True)%}
+                                        {%if messages%}
+                                            {%for category,message in messages%}
+                                                <div class="form-row">
+                                                    <div class="col-mb-2"></div>
+                                                    <div class="form-group col-md-10">
+                                                    <div class="alert alert-{{category}} alert-dismissible" role="alert">
+                                                        <label class="text-info">{{message}}</label>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            {%endfor%}
+                                            {%endif%}
+                                        {%endwith%}
+                                        <div class="col-mb-12" align="center">
+                                            <button type="submit" class="btn btn-primary" >Login</button>
+                                        </div>
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                        <footer class="py-4 bg-light mt-auto">
+                            <div class="container-fluid">
+                                <div class="d-flex align-items-center justify-content-between small">
+                                    <div class="text-muted">Copyright &copy; Your Website 2019</div>
+                                    <div>
+                                        <a href="#">Privacy Policy</a>
+                                        &middot;
+                                        <a href="#">Terms &amp; Conditions</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+        </div>
+{% endblock %}
