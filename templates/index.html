@@ -12,9 +12,9 @@
             <form action="/prediction" method="post">
               <div class="form-group">
                 <h4>Masukan kalimat</h4>
-                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="masukan kalimat"
+                <input type="text" class="form-control" id="kalimat" aria-describedby="kalimat_add" placeholder="masukan kalimat"
                  name="kalimat">
-                <small id="emailHelp" class="form-text text-muted">Kalimat yang dimasukan akan diprediksi kedalam model</small>
+                <small id="kalimat_add" class="form-text text-muted">Kalimat yang dimasukan akan diprediksi kedalam model</small>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -24,10 +24,10 @@
               <div class="form-group">
                 <h4>Hasil Normalisasi</h4>
                   {% if text %}
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Hasil Normalisasi kalimat"
+                    <input type="text" class="form-control" id="hasil" aria-describedby="hasil_add" placeholder="Hasil Normalisasi kalimat"
                  name="kalimat" value="{{text}}">
                   {%endif%}
-                <small id="emailHelp" class="form-text text-muted">kalimat yang anda masukan akan dinormalisasikan</small>
+                <small id="hasil_add" class="form-text text-muted">kalimat yang anda masukan akan dinormalisasikan</small>
               </div>
             </form>
         </div>
