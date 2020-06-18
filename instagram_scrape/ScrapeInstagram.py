@@ -26,7 +26,7 @@ class go_url:
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.binary_location = FIREFOX_BIN
-        self.driver = webdriver.Firefox(executable_path=GECKODRIVER,firefox_options=options)
+        self.driver = webdriver.Firefox(executable_path=GECKODRIVER,options=options)
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
