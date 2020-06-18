@@ -191,9 +191,7 @@ def instagram_post():
     password=item[1]
     print(username)
     print(password)
-    post=go_url().login_page('https://www.instagram.com/p/Bd47GDYB_Bu/')
-    # post = go_url().login_page('https://www.instagram.com/p/CA7ChUxnBRQ/')
-    # arif.post_page('https://www.instagram.com/p/CA1c8b4DIFA/')
+    post=go_url().login_page('https://www.instagram.com/p/CA7z2gHDI09/')
     return 'Success'
 
 @app.route('/grafik',methods=['GET','POST'])

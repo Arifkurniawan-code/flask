@@ -18,15 +18,15 @@ class go_url:
     #     # options = webdriver.FirefoxOptions()
     #     # options.add_argument("--headless")
     #     # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe', options=options)
-    #     self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe')
+    #     self.driver = webdriver.Chrome(executable_path=r'instagram_scrape\driver\chromedriver.exe')
 
     def driver_path(self):
-        options = webdriver.FirefoxOptions()
+        options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
-        options.binary_location = os.environ.get("FIREFOX_BIN")
-        self.driver = webdriver.Firefox(executable_path=os.environ.get("GECKODRIVER"),options=options)
+        options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+        self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
@@ -102,8 +102,8 @@ class go_url:
                 element_komen = self.driver.find_element_by_class_name('Ypffh')
                 element_komen.send_keys(peringatan)
                 element_enter = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/button')
-                # element_komen.send_keys(Keys.ENTER)
-                # element_enter.click()
+                element_komen.send_keys(Keys.ENTER)
+                element_enter.click()
                 time.sleep(2)
                 print('Find Cyberbullying')
             else:
