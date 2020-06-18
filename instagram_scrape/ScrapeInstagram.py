@@ -14,10 +14,13 @@ class go_url:
         return None
 
     def driver_path(self):
-        # options = webdriver.FirefoxOptions()
-        # options.add_argument("--headless")
-        # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe', options=options)
-        self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe')
+        options = webdriver.FirefoxOptions()
+        options.add_argument("--headless")
+        options.add_argument('--disable-gpu')
+        options.add_argument('--no-sandbox')
+        options.binary_location = FIREFOX_BIN
+        self.driver = webdriver.Firefox(executable_path=GECKODRIVER,firefox_options=options)
+        # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe')
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
