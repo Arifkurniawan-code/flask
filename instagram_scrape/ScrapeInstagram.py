@@ -7,8 +7,8 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 from lstm_model import LSTM_model
-FIREFOX_BIN="/usr/local/bin:/usr/bin:/bin:/app/vendor/firefox"
-GECKODRIVER="/usr/local/bin:/usr/bin:/bin:/app/vendor/"
+import os
+
 class go_url:
     def __init__(self):
         self.driver_path()
@@ -25,8 +25,8 @@ class go_url:
         options.add_argument("--headless")
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
-        options.binary_location = FIREFOX_BIN
-        self.driver = webdriver.Firefox(executable_path=GECKODRIVER,options=options)
+        options.binary_location = os.environ.get("FIREFOX_BIN")
+        self.driver = webdriver.Firefox(executable_path=os.environ.get("GECKODRIVER"),options=options)
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
