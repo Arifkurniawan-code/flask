@@ -7,11 +7,18 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 from lstm_model import LSTM_model
-
+FIREFOX_BIN="/usr/local/bin:/usr/bin:/bin:/app/vendor/firefox"
+GECKODRIVER="/usr/local/bin:/usr/bin:/bin:/app/vendor/"
 class go_url:
     def __init__(self):
         self.driver_path()
         return None
+
+    # def driver_path(self):
+    #     # options = webdriver.FirefoxOptions()
+    #     # options.add_argument("--headless")
+    #     # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe', options=options)
+    #     self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe')
 
     def driver_path(self):
         options = webdriver.FirefoxOptions()
@@ -20,7 +27,6 @@ class go_url:
         options.add_argument('--no-sandbox')
         options.binary_location = FIREFOX_BIN
         self.driver = webdriver.Firefox(executable_path=GECKODRIVER,firefox_options=options)
-        # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe')
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
