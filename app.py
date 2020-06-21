@@ -299,4 +299,4 @@ def logout():
         return '<p>user already logged out</p>'
 
 if __name__=='__main__':
-    app.run(debug=True)
+    app.run()
