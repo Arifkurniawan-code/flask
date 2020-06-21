@@ -29,6 +29,7 @@ class go_url:
         options.add_argument('--no-sandbox')
         options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
         self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+        print('success')
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
@@ -68,12 +69,8 @@ class go_url:
             Keys.ENTER)
         time.sleep(10)
         self.post_page(url2,kode)
+        print('login success')
 
-    def deteksi_no_bot(self,text,names,n):
-        print('masuk sini')
-        model=LSTM_model()
-        kelas=model.balas_komen(text)
-        return kelas
 
     def deteksi(self,text,names,n):
         # id="//*[@id='react-root']/section/main/div/div[1]/article/div[2]/div[1]/ul/ul["+str(n)+"]/div/li/div/div[1]/div[2]/div/div/button"
@@ -190,6 +187,7 @@ class go_url:
                 src = img.get_attribute('poster')
                 urllib.request.urlretrieve(src, 'static/images/' + text + '.png')
         else:
+            print('find function')
             try:
                 if (self.driver.find_element_by_xpath(
                         '/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div/div/div/div[2]/div[1]/div').is_displayed(
