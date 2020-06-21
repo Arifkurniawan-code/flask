@@ -62,10 +62,10 @@
                                             <tbody>
                                             {% for item in item2 %}
                                             <tr>
-                                                <td><a href="{{item[1]}}">{{item[1]}}</a></td>
-                                                <td><a class="btn btn-primary" href="/hasil_postingan?url={{item[1]}}">Lihat Hasil</a></td>
+                                                <td><a href="{{item[0]}}">{{item[0]}}</a></td>
+                                                <td><a class="btn btn-primary" href="/hasil_postingan?url={{item[0]}}">Lihat Hasil</a></td>
                                             </tr>
-                                        {% endfor %}
+                                            {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>

@@ -1,0 +1,22 @@
+{% extends 'base_user.html' %}
+ {% block body %}
+     <div class="row justify-content-center">
+            <div class="col-10 input-panel">
+                <form action="instagram_post" method="post">
+                <input type="text" class="form-control" id="exampleFormControlInput1" name="kalimat" placeholder="Masukan URL...">
+                <input type="hidden" name="kode" value="2">
+                </form>
+            </div>
+        </div>
+        <!-- Space -->
+        <div class="row information">
+            <div class="col text">
+                <img src="https://img.icons8.com/cotton/480/000000/robot-2.png"/>
+            </div>
+            <div class="col text">
+                <h1 class="judul">Identifikasi Postingan dengan BOT</h1>
+                <h4 class="isi">Fitur ini adalah salah satu fitur yang dapat melakukan identifikasi terhadap sebuah postingan instagram yang terintegrasi dengan akun <a href="https://www.instagram.com/deteksicyberbullying/">@deteksicyberbullying</a>, Jika ditemukan komentar berjenis cyberbullying, maka akun tersebut akan mengirimkan peringatan kepada akun yang berkomentar sebagai salah satu bentuk upaya preventif.
+                </h4>
+            </div>
+        </div>
+{% endblock %}

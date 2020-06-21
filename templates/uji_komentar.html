@@ -1,0 +1,21 @@
+{% extends 'base_user.html' %}
+{% block body %}
+    <div class="row justify-content-center">
+            <div class="col-10 input-panel">
+                <form action="uji_komentar" method="post">
+                <input type="text" class="form-control" name="kalimat" id="exampleFormControlInput1" placeholder="Masukan Kalimat.....">
+                </form>
+            </div>
+        </div>
+        <!-- Space -->
+    <div class="row information">
+        <div class="col text">
+            <img src="https://img.icons8.com/doodle/480/000000/topic--v1.png"/>
+        </div>
+        <div class="col text">
+            <h1 class="judul">Identifikasi Postingan Tanpa Bot</h1>
+            <h4 class="isi">Fitur ini adalah salah satu fitur yang dapat melakukan identifikasi terhadap sebuah postingan instagram, cara menggunakannya user dapat memasukan url postingan pada kolom diatas dan sistem akan melakukan identifikasi. Hasil dari identifikasi akan ditampilkan kepada user dalam bentuk tabel.
+            </h4>
+        </div>
+    </div>
+{% endblock %}

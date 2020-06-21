@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 import time
 import re
+import urllib.request
+import urllib3
 from lstm_model import LSTM_model
 import os
 
@@ -14,19 +16,19 @@ class go_url:
         self.driver_path()
         return None
 
-    # def driver_path(self):
-    #     # options = webdriver.FirefoxOptions()
-    #     # options.add_argument("--headless")
-    #     # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe', options=options)
-    #     self.driver = webdriver.Chrome(executable_path=r'instagram_scrape\driver\chromedriver.exe')
-
     def driver_path(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument('--disable-gpu')
-        options.add_argument('--no-sandbox')
-        options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-        self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+        # options = webdriver.FirefoxOptions()
+        # options.add_argument("--headless")
+        # self.driver = webdriver.Firefox(executable_path=r'instagram_scrape\driver\geckodriver.exe', options=options)
+        self.driver = webdriver.Chrome(executable_path=r'instagram_scrape\driver\chromedriver.exe')
+
+    # def driver_path(self):
+    #     options = webdriver.ChromeOptions()
+    #     options.add_argument("--headless")
+    #     options.add_argument('--disable-gpu')
+    #     options.add_argument('--no-sandbox')
+    #     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    #     self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
@@ -53,7 +55,7 @@ class go_url:
             self.driver.close()
             return True
 
-    def login_page(self,url2):
+    def login_page(self,url2,kode):
         url='https://www.instagram.com/accounts/login/'
         self.driver.get(url)
         usernameInput = 'deteksicyberbullying'
@@ -64,8 +66,14 @@ class go_url:
             EC.element_to_be_clickable((By.XPATH, "//input[@name='password']"))).send_keys(passwordInput)
         WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//input[@name='password']"))).send_keys(
             Keys.ENTER)
-        time.sleep(15)
-        self.post_page(url2)
+        time.sleep(10)
+        self.post_page(url2,kode)
+
+    def deteksi_no_bot(self,text,names,n):
+        print('masuk sini')
+        model=LSTM_model()
+        kelas=model.balas_komen(text)
+        return kelas
 
     def deteksi(self,text,names,n):
         # id="//*[@id='react-root']/section/main/div/div[1]/article/div[2]/div[1]/ul/ul["+str(n)+"]/div/li/div/div[1]/div[2]/div/div/button"
@@ -89,9 +97,15 @@ class go_url:
                     balas.click()
                 except:
                     id = "//*[@id='react-root']/section/main/div/div[1]/article/div[2]/div[1]/ul/ul[" + str(
-                        n) + "]/div/li/div/div[1]/div[2]/div/div/button"
-                    balas = self.driver.find_element(By.XPATH, id)
-                    balas.click()
+                            n) + "]/div/li/div/div[1]/div[2]/div/div/button"
+                    try:
+                        balas = WebDriverWait(self.driver, 20).until(
+                                EC.element_to_be_clickable((By.XPATH, id)))
+                        print('opsi2')
+                    except:
+                        balas = self.driver.find_element(By.XPATH, id)
+                        print('opsi1')
+                        balas.click()
                     pass
                 # balas = self.driver.find_element(By.XPATH, id)
                 # balas.click()
@@ -101,73 +115,160 @@ class go_url:
                 element_clear.clear()
                 element_komen = self.driver.find_element_by_class_name('Ypffh')
                 element_komen.send_keys(peringatan)
-                element_enter = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/button')
-                element_komen.send_keys(Keys.ENTER)
-                element_enter.click()
+                # element_enter = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/button')
+                # element_komen.send_keys(Keys.ENTER)
+                # element_enter.click()
                 time.sleep(2)
                 print('Find Cyberbullying')
             else:
                 print('Not Cyberbullying')
         return kelas
 
-    def post_page(self,url):
+    def post_page(self,url,kode):
         url_post = url
         self.driver.get(url_post)
         # if(self.driver.find_element_by_xpath('/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div/div/div/div[2]/div[1]/div').is_displayed()):
         #     self.login_page(url)
         # else:
-        try:
-            if(self.driver.find_element_by_xpath('/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div/div/div/div[2]/div[1]/div').is_displayed(True)):
-                self.login_page()
-        except:
-            pass
-
-        try:
-            # load_more_comment = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(
-            #     (By.XPATH, '//*[@id="react-root"]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button')))
-            load_more_comment = driver.find_element_by_xpath(
-                '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
-            i = 0
-            while load_more_comment.is_displayed() and i < 50:
-                load_more_comment.click()
-                i += 1
-                time.sleep(2)
-                load_more_comment = driver.find_element_by_xpath(
-                    '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
-        except:
+        if kode=='2':
+            try:
+                if(self.driver.find_element_by_xpath('/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div/div/div/div[2]/div[1]/div').is_displayed(True)):
+                    self.login_page()
+            except:
                 pass
 
-        user_names = []
-        user_comments = []
-        label_comment=[]
-        tuple=[]
-        comment = self.driver.find_elements_by_class_name('gElp9 ')
-        n=-1
-        for c in comment:
-            container = c.find_element_by_class_name('C4VMK')
-            name = container.find_element_by_class_name('_6lAjh').text
-            content = container.find_element_by_tag_name('span').text
-            content = content.replace('\n', ' ').strip().rstrip()
-            user_names.append(name)
-            user_comments.append(content)
-            n+=1
-            x=self.deteksi(content,name,n)
-            label_comment.append(x)
-            data=(name,content,x)
-            tuple.append(data)
+            try:
+                # load_more_comment = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(
+                #     (By.XPATH, '//*[@id="react-root"]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button')))
+                load_more_comment = self.driver.find_element_by_xpath(
+                    '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
+                i = 0
+                while load_more_comment.is_displayed() and i < 4:
+                    load_more_comment.click()
+                    i += 1
+                    time.sleep(2)
+                    load_more_comment = self.driver.find_element_by_xpath(
+                        '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
+            except:
+                    pass
 
-        print(tuple)
-        user_names.pop(0)
-        user_comments.pop(0)
-        label_comment.pop(0)
-        from instagram_scrape import save
-        from instagram_scrape import excel_exporter
-        save.export(user_names, user_comments, label_comment, url_post,tuple)
-        text = re.sub(r'[^a-zA-Z0-9]', '', url_post)
-        print(text)
-        with open('static/images/'+text+'.png', 'wb') as file:
-            file.write(self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/div/article/div[1]/div/div/div[2]').screenshot_as_png)
+            user_names = []
+            user_comments = []
+            label_comment=[]
+            tuple=[]
+            comment = self.driver.find_elements_by_class_name('gElp9 ')
+            n=-1
+            for c in comment:
+                container = c.find_element_by_class_name('C4VMK')
+                name = container.find_element_by_class_name('_6lAjh').text
+                content = container.find_element_by_tag_name('span').text
+                content = content.replace('\n', ' ').strip().rstrip()
+                user_names.append(name)
+                user_comments.append(content)
+                n+=1
+                x=self.deteksi(content,name,n)
+                label_comment.append(x)
+                data=(name,content,x)
+                tuple.append(data)
+
+            print(tuple)
+            username=user_names[0]
+            caption=user_comments[0]
+            likes=label_comment[0]
+            tuple.pop(0)
+            from instagram_scrape import save
+            save.export(url_post,tuple,username,caption,likes)
+            text = re.sub(r'[^a-zA-Z0-9]', '', url_post)
+            print(text)
+            try:
+                img=self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/article/div[1]/div/div/div[1]/img')
+                src = img.get_attribute('src')
+                urllib.request.urlretrieve(src, 'static/images/'+text+'.png')
+            except:
+                img = self.driver.find_element_by_xpath(
+                    '/html/body/div[4]/div[2]/div/article/div[1]/div/div/div/div/div')
+                src = img.get_attribute('poster')
+                urllib.request.urlretrieve(src, 'static/images/' + text + '.png')
+        else:
+            try:
+                if (self.driver.find_element_by_xpath(
+                        '/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div/div/div/div[2]/div[1]/div').is_displayed(
+                        True)):
+                    self.login_page()
+            except:
+                pass
+            try:
+                # load_more_comment = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(
+                #     (By.XPATH, '//*[@id="react-root"]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button')))
+                load_more_comment = self.driver.find_element_by_xpath(
+                    '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
+                i = 0
+                while load_more_comment.is_displayed() and i < 50:
+                    load_more_comment.click()
+                    i += 1
+                    time.sleep(2)
+                    load_more_comment = self.driver.find_element_by_xpath(
+                        '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
+            except:
+                pass
+
+            user_names = []
+            user_comments = []
+            label_comment = []
+            tuple = []
+            comment = self.driver.find_elements_by_class_name('gElp9 ')
+            n = -1
+            for c in comment:
+                container = c.find_element_by_class_name('C4VMK')
+                name = container.find_element_by_class_name('_6lAjh').text
+                content = container.find_element_by_tag_name('span').text
+                content = content.replace('\n', ' ').strip().rstrip()
+                user_names.append(name)
+                user_comments.append(content)
+                n += 1
+
+            x=LSTM_model().prediction(user_comments)
+            print(x)
+            print(x[1])
+            print(x[10])
+            print(x[0])
+            username = user_names[0]
+            caption = user_comments[0]
+            likes = x[0]
+            label=[]
+            for i in range(len(user_comments)):
+                if x[i]==0:
+                    label.append('Cyberbullying')
+                elif x[i]==1:
+                    label.append('Irrelevant')
+                elif x[i]==2:
+                    label.append('Netral')
+                else:
+                    label.append('Bukan Cyberbullying')
+            tuple=list(zip(user_names,user_comments,label))
+            print(label)
+            from instagram_scrape import save
+            save.export(url_post, tuple, username, caption, likes)
+            text = re.sub(r'[^a-zA-Z0-9]', '', url_post)
+            print(text)
+            try:
+                try:
+                    img = self.driver.find_element_by_xpath(
+                        '//*[@id="react-root"]/section/main/div/div/article/div[1]/div/div/div[1]/img')
+                    src = img.get_attribute('src')
+                    urllib.request.urlretrieve(src, 'static/images/' + text + '.png')
+                except:
+                    img = self.driver.find_element_by_xpath(
+                        '//*[@id="react-root"]/section/main/div/div[1]/article/div[1]/div/div[1]/div[2]/div/div/div/ul/li[2]/div/div/div/div[1]/img')
+                    src = img.get_attribute('src')
+                    urllib.request.urlretrieve(src, 'static/images/' + text + '.png')
+            except:
+                img = self.driver.find_element_by_xpath(
+                    '//*[@id="react-root"]/section/main/div/div[1]/article/div[1]/div/div/div/div/div/video')
+                src = img.get_attribute('poster')
+                urllib.request.urlretrieve(src, 'static/images/' + text + '.png')
         self.driver.close()
+
 
 # arif=go_url()
 # arif.login_page()

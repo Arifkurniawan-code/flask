@@ -7,10 +7,60 @@ app.secret_key = 'super secret key'
 import os
 import pandas as pd
 import sqlite3
+import re
 
 @app.route('/',methods=['GET','POST'])
 def home():
-    return render_template('index.html')
+    return render_template('isi.html')
+
+@app.route('/uji_komentar',methods=['GET','POST'])
+def uji_komentar():
+    if request.method == 'POST':
+        comment_text = request.form['kalimat']
+        comment_text = text_prepocessing(comment_text)
+        print(comment_text)
+        model = LSTM_model()
+        dict = {}
+        dict = model.predict_comment(comment_text)
+        print(dict['class'])
+        print(dict['probabilities'][1])
+        if (dict['class'] == [0]):
+            Label=0
+            image='https://img.icons8.com/doodle/480/000000/topic--v1.png'
+            flash('Komentar anda termasuk komentar cyberbullying',category='black')
+            alert='Setelah dianalisa, komentar yang anda masukan memiliki kecenderungan menyinggung orang lain karena memiliki makna kurang bagus ataupun ada unsur-unsur negatif lainya, Lebih berhati-hatilah dalam berkomentar'
+        elif (dict['class'] == [1]):
+            Label = 1
+            image = 'https://img.icons8.com/doodle/480/000000/topic--v1.png'
+            flash('Komentar anda termasuk komentar Irrelevant', category='gray')
+            alert='Setelah dianalisa, komentar yang anda masukan adalah komentar yang tidak berkaitan dengan cyberbullying'
+        elif (dict['class'] == [2]):
+            Label = 2
+            image = 'https://img.icons8.com/doodle/480/000000/topic--v1.png'
+            flash('Komentar anda termasuk komentar Netral', category='yellow')
+            alert='Setelah dianalisa, komentar anda memiliki makna yang netral, namun lebih baik lebih berhati-hati dalam berkomentar'
+        else:
+            Label = 3
+            image = 'https://img.icons8.com/doodle/480/000000/topic--v1.png'
+            flash('Komentar anda termasuk komentar Bukan cyberbullying', category='green')
+            alert='Setelah dianalisa, komentar anda tidak memiliki unsur yang merugikan orang lain, teruslah berkomentar positif'
+        connection = sqlite3.connect('data/Admin.db')
+        conn = connection.cursor()
+        conn.execute('INSERT INTO riwayat(kalimat,label) VALUES ((?),(?))', (comment_text, Label))
+        connection.commit()
+        conn.close()
+        connection.close()
+        return render_template('hasil.html', image=image,alert=alert)
+    else:
+        return render_template('uji_komentar.html')
+
+@app.route('/post_identifikasi',methods=['GET','POST'])
+def post_identifikasi():
+        return render_template('post_identifikasi.html')
+
+@app.route('/bot_post',methods=['GET','POST'])
+def bot_post():
+    return render_template('bot_post.html')
 
 @app.route('/admin',methods=['GET','POST'])
 def login():
@@ -90,7 +140,7 @@ def perbarui_model():
     if x:
         outcome=loading()
         model=LSTM_model().new_model()
-        return redirect('admin',message='Berhasil memperbarui Model')
+        return render_template('admin_homepage.html',message='Berhasil memperbarui Model')
     else:
         return render_template('session.html', message='No Session Available')
 
@@ -179,20 +229,36 @@ def lihat_data():
 
 @app.route('/instagram_post',methods=['GET','POST'])
 def instagram_post():
-    connection=sqlite3.connect('data/Admin.db')
-    conn=connection.cursor()
-    cursor=conn.execute('SELECT * from instagram')
-    item=cursor.fetchone()
-    connection.commit()
-    conn.close()
-    connection.close()
-    # print(item.keys())
-    username=item[0]
-    password=item[1]
-    print(username)
-    print(password)
-    post=go_url().login_page('https://www.instagram.com/p/CA7z2gHDI09/')
-    return 'Success'
+    if request.method=='POST':
+        url=request.form['kalimat']
+        kode=request.form['kode']
+        connection=sqlite3.connect('data/Admin.db')
+        conn=connection.cursor()
+        cursor=conn.execute('SELECT * from instagram')
+        item=cursor.fetchone()
+        connection.commit()
+        conn.close()
+        connection.close()
+        # print(item.keys())
+        username=item[0]
+        password=item[1]
+        print(username)
+        print(password)
+        print(kode)
+        post=go_url().login_page(url,kode)
+        name_image = re.sub(r'[^a-zA-Z0-9]', '', url)
+        connection = sqlite3.connect('data/riwayat_instagram.db')
+        conn = connection.cursor()
+        cursor = conn.execute("SELECT * from '{}'".format(url))
+        item = cursor.fetchall()
+        cursor2 = conn.execute('SELECT * from riwayat_instagram WHERE url="{}"'.format(url))
+        item2 = cursor2.fetchone()
+        connection.commit()
+        conn.close()
+        conn.close()
+        name_image = 'images/' + name_image + '.png'
+        print(name_image)
+    return render_template('tabel_identifikasi.html', item=item, name_image=name_image, item2=item2,kode=kode)
 
 @app.route('/grafik',methods=['GET','POST'])
 def grafik():
@@ -210,19 +276,19 @@ def riwayat_uji():
         conn=connection.cursor()
         cursor=conn.execute('SELECT * FROM riwayat')
         item = cursor.fetchall()
-        cursor=conn.execute('SELECT * FROM riwayat_instagram')
-        item2=cursor.fetchall()
+        connection.commit()
+        conn.close()
+        connection.close()
+        connection = sqlite3.connect('data/riwayat_instagram.db')
+        conn = connection.cursor()
+        cursor = conn.execute('SELECT * FROM riwayat_instagram')
+        item2 = cursor.fetchall()
         connection.commit()
         conn.close()
         connection.close()
         return render_template('riwayat_uji.html',item1=item,item2=item2)
     else:
         return render_template('session.html', message='No Session Available')
-
-@app.route('/instagram',methods=['GET','POST'])
-def post():
-    df=pd.read_excel('instagram_scrape/komentar/CA1c8b4DIFA.xlsx')
-    return render_template('post.html',column_names=df.columns.values,row_data=list(df.values.tolist()),link_column='name',zip=zip)
 
 @app.route('/logout')
 def logout():
@@ -232,38 +298,5 @@ def logout():
     else:
         return '<p>user already logged out</p>'
 
-@app.route('/prediction',methods=['POST',"GET"])
-def predict_sentiment():
-    if request.method=='POST':
-        comment_text=request.form['kalimat']
-        comment_text=text_prepocessing(comment_text)
-        print(comment_text)
-        model=LSTM_model()
-        dict={}
-        dict=model.predict_comment(comment_text)
-        print(dict['class'])
-        print(dict['probabilities'][1])
-        if(dict['class']==[0]):
-            Label=0
-            sentiment='Cyberbullying'
-        elif(dict['class']==[1]):
-            Label = 1
-            sentiment='Irrelevant'
-        elif (dict['class'] == [2]):
-            Label = 2
-            sentiment = 'Netral'
-        else:
-            Label = 3
-            sentiment='Bukan Cyberbullying'
-        connection = sqlite3.connect('data/Admin.db')
-        conn=connection.cursor()
-        conn.execute('INSERT INTO riwayat(kalimat,label) VALUES ((?),(?))',(comment_text,Label))
-        connection.commit()
-        conn.close()
-        connection.close()
-    return render_template('index.html',text=comment_text,classification=sentiment,prob_cyb=dict['probabilities'][0],
-                           prob_ir=dict['probabilities'][1],prob_net=dict['probabilities'][2],
-                           prob_non=dict['probabilities'][3])
-
 if __name__=='__main__':
-    app.run()
+    app.run(debug=True)

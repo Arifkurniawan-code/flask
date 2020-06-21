@@ -16,7 +16,11 @@ import re
 from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
 import json
+from numpy import asarray
+from numpy import zeros
 import tensorflow as tf
+import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 PROCESSED_DATA_PATH = 'data/hasil'
 train_data = pd.read_csv('{}/clear_train.csv'.format(PROCESSED_DATA_PATH))
@@ -27,7 +31,7 @@ class LSTM_model:
     def __init__(self,filepath=PROCESSED_DATA_PATH):
         self.max_fatures = 2000
         self.batch_size = 128
-        self.build_model()
+        # self.build_model()
         return print('Train data shape                 :', train_data.shape)
 
     def describe_model(self):
@@ -72,12 +76,49 @@ class LSTM_model:
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(self.X, self.Y, test_size=0.20, random_state=42)
         print(self.X_train.shape,self.Y_train.shape)
         print(self.X_test.shape, self.Y_test.shape)
+        with open('data/tokenizer.pickle', 'wb') as handle:
+            pickle.dump(self.tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        self.vocab_size = len(self.tokenizer.word_index) + 1
+
+    def TFIDF(self):
+        vectorizer = TfidfVectorizer()
+        X = vectorizer.fit_transform(train_data['hasil_normalisasi'].values)
+        feature_names = vectorizer.get_feature_names()
+        print(vectorizer.get_feature_names())
+        print(X.shape)
+        doc = 0
+        feature_index = X[doc, :].nonzero()[1]
+        tfidf_score = zip(feature_index, [X[doc, x] for x in feature_index])
+        for w, s in [(feature_names[i], s) for (i, s) in tfidf_score]:
+            print(w, s)
+        df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names())
+        print(df)
+        df.to_csv('model/TFIDF.csv')
 
     def make_model(self):
-        embed_dim = 128
+        embeddings_index = dict()
+        # f = open('mymodel/idwiki_word2vec_200.model',encoding='utf-8')
+        f = open('model/TFIDF.csv')
+        for line in f:
+            values = line.split()
+            word = values[0]
+            coefs = asarray(values[1:], dtype='float32')
+            embeddings_index[word] = coefs
+        f.close()
+        print('Loaded %s word vectors.' % len(embeddings_index))
+
+        # create a weight matrix for words in training docs
+        embedding_matrix = zeros((self.vocab_size, 200))
+        for word, i in self.tokenizer.word_index.items():
+            embedding_vector = embeddings_index.get(word)
+            if embedding_vector is not None:
+                embedding_matrix[i] = embedding_vector
+
+        print(embedding_matrix[1])
+        embed_dim = 200
         lstm_out = 196
         model = tensorflow.keras.Sequential()
-        model.add(Embedding(self.max_fatures,embed_dim,input_length=self.X.shape[1]))
+        model.add(Embedding(self.vocab_size, embed_dim,weights=[embedding_matrix],input_length=self.X.shape[1]))
         model.add(SpatialDropout1D(0.4))
         model.add(LSTM(lstm_out, dropout=0.2, recurrent_dropout=0.2))
         # model.add(LSTM(lstm_out,activation='tanh'))
@@ -123,6 +164,7 @@ class LSTM_model:
     def new_model(self):
         self.describe_model()
         self.tokenize_data()
+        self.TFIDF()
         self.make_model()
         self.load_model()
         self.show_plot()
@@ -135,12 +177,15 @@ class LSTM_model:
         self.show_plot()
 
     def predict_comment(self,text):
-        self.build_model()
+        # self.build_model()
+        self.model = load_model('model/My_model.h5')
+        with open('data/tokenizer.pickle', 'rb') as handle:
+            tokenizer2 = pickle.load(handle)
         twt=[]
         twt.append(text)
         print(twt)
         # vectorizing the tweet by the pre-fitted tokenizer instance
-        twt = self.tokenizer.texts_to_sequences(twt)
+        twt = tokenizer2.texts_to_sequences(twt)
         # padding the tweet to have exactly the same shape as `embedding_2` input
         twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
         print(twt)
@@ -167,12 +212,15 @@ class LSTM_model:
 
     def balas_komen(self,text):
         import Prepocessing_sentence as normal
+        self.model = load_model('model/My_model.h5')
+        with open('data/tokenizer.pickle', 'rb') as handle:
+            tokenizer2 = pickle.load(handle)
         text=normal.text_prepocessing(text)
         twt=[]
         twt.append(text)
         print(twt)
         # vectorizing the tweet by the pre-fitted tokenizer instance
-        twt = self.tokenizer.texts_to_sequences(twt)
+        twt = tokenizer2.texts_to_sequences(twt)
         # padding the tweet to have exactly the same shape as `embedding_2` input
         twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
         print(twt)
@@ -191,6 +239,21 @@ class LSTM_model:
             kelas=3
         return kelas
 
+    def prediction(self,array):
+        import Prepocessing_sentence as normal
+        self.model = load_model('model/My_model.h5')
+        with open('data/tokenizer.pickle', 'rb') as handle:
+            tokenizer2 = pickle.load(handle)
+        print(array)
+        # vectorizing the tweet by the pre-fitted tokenizer instance
+        twt = tokenizer2.texts_to_sequences(array)
+        # padding the tweet to have exactly the same shape as `embedding_2` input
+        twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
+        print(twt)
+
+        sentiment = self.model.predict(twt, batch_size=1, verbose=2)[0]
+        kelas = self.model.predict_classes(twt, batch_size=1)
+        return kelas
 
 # test=LSTM_model()
 # test.build_model()

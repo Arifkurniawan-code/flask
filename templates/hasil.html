@@ -1,0 +1,27 @@
+{% extends 'base_user.html' %}
+{% block body %}
+    <div class="row justify-content-center">
+            <div class="col-10 input-panel">
+                <form action="uji_komentar" method="post">
+                <input type="text" class="form-control" name="kalimat" id="exampleFormControlInput1" placeholder="Masukan Kalimat.....">
+                </form>
+            </div>
+        </div>
+        <!-- Space -->
+<!-- Start -->
+{%with messages=get_flashed_messages(with_categories=True)%}
+        {%if messages%}
+        {%for category,message in messages%}
+    <div class="row information">
+        <div class="col text">
+            <img src="{{image}}"/>
+        </div>
+        <div class="col text-hasil" style="background-color:{{category}};">
+            <h1 class="judul">{{message}}</h1>
+            <h4 class="isi">{{alert}}</h4>
+        </div>
+    </div>
+            {%endfor%}
+    {%endif%}
+    {%endwith%}
+{% endblock %}

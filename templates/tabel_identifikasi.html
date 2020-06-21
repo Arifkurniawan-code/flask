@@ -1,0 +1,39 @@
+{% extends 'base_user.html' %}
+{% block body %}
+    <div class="row justify-content-center">
+            <div class="col-10 input-panel">
+                <form action="instagram_post" method="post">
+                <input type="text" class="form-control" id="exampleFormControlInput1" name="kalimat" placeholder="Masukan URL...">
+                <input type="hidden" name="kode" value="{{kode}}">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row information">
+                <div class="col text">
+                    <img src="https://images.unsplash.com/photo-1592485316742-bb9b957303b8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80"/>
+                </div>
+    </div>
+    <div class="row information" style="font-family: 'Montserrat', sans-serif;">
+    <div class="col text-hasil">
+        <table class="table table-list-search">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Komentar</th>
+                    <th>Label</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in item %}
+                <tr>
+                    <td><a href="https://www.instagram.com/{{item[2]}}/">{{item[2]}}</a></td>
+                    <td>{{item[1]}}</td>
+                    <td>{{item[3]}}</td>
+                </tr>
+             {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
