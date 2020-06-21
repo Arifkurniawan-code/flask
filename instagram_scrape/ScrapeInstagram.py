@@ -24,7 +24,7 @@ class go_url:
 
     def driver_path(self):
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -207,6 +207,7 @@ class go_url:
                     time.sleep(2)
                     load_more_comment = self.driver.find_element_by_xpath(
                         '/html/body/div[1]/section/main/div/div/article/div[2]/div[1]/ul/li/div/button/span')
+                    print('comments')
             except:
                 pass
 
