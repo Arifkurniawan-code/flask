@@ -16,3 +16,4 @@ regex==2020.4.4
 selenium==3.141.0
 h5py==2.10.0
 pickleshare==0.7.5
+chromedriver-binary==84.0.4147.30.0

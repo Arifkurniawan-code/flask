@@ -10,6 +10,7 @@ import urllib.request
 import urllib3
 from lstm_model import LSTM_model
 import os
+import chromedriver_binary
 
 class go_url:
     def __init__(self):
@@ -23,13 +24,21 @@ class go_url:
     #     self.driver = webdriver.Chrome(executable_path=r'instagram_scrape\driver\chromedriver.exe')
 
     def driver_path(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--no-sandbox')
-        options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-        self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
-        print('success')
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("window-size=1024,768")
+        chrome_options.add_argument("--no-sandbox")
+        self.driver = webdriver.Chrome(chrome_options=chrome_options)
+
+    # def driver_path(self):
+    #     options = webdriver.ChromeOptions()
+    #     options.add_argument("--headless")
+    #     options.add_argument('--disable-dev-shm-usage')
+    #     options.add_argument('--no-sandbox')
+    #     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    #     self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    #     print('success')
 
     def profile_screenshoot(self,username,password,url2):
         url = 'https://www.instagram.com/accounts/login/'
@@ -228,9 +237,6 @@ class go_url:
 
             x=LSTM_model().prediction(user_comments)
             print(x)
-            print(x[1])
-            print(x[10])
-            print(x[0])
             username = user_names[0]
             caption = user_comments[0]
             likes = x[0]
