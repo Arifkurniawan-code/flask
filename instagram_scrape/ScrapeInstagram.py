@@ -11,6 +11,7 @@ import urllib3
 from lstm_model import LSTM_model
 import os
 import chromedriver_binary
+from webdriver_manager.chrome import ChromeDriverManager
 
 class go_url:
     def __init__(self):
@@ -29,7 +30,7 @@ class go_url:
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("window-size=1024,768")
         chrome_options.add_argument("--no-sandbox")
-        self.driver = webdriver.Chrome(chrome_options=chrome_options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=chrome_options)
 
     # def driver_path(self):
     #     options = webdriver.ChromeOptions()
