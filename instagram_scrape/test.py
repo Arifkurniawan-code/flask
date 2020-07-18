@@ -1,0 +1,3 @@
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
+
+print(StopWordRemoverFactory)

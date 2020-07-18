@@ -1,26 +1,22 @@
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential
 from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from tensorflow.keras.layers import Embedding,Dense,LSTM,SpatialDropout1D
 import tensorflow
 from sklearn.model_selection import train_test_split
-from keras.utils.np_utils import to_categorical
-from sklearn.utils import resample
-from sklearn.utils import shuffle
 from sklearn.metrics import confusion_matrix,classification_report
-import re
 from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
-import json
 from numpy import asarray
 from numpy import zeros
 import tensorflow as tf
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
+import codecs
+from nltk.tokenize import word_tokenize
+import gensim.models as Word2vec
 
 PROCESSED_DATA_PATH = 'data/hasil'
 train_data = pd.read_csv('{}/clear_train.csv'.format(PROCESSED_DATA_PATH))
@@ -29,10 +25,10 @@ train_data = train_data[['hasil_normalisasi', 'Label']]
 class LSTM_model:
 
     def __init__(self,filepath=PROCESSED_DATA_PATH):
-        self.max_fatures = 2000
+        self.max_fatures = 5000
         self.batch_size = 128
         # self.build_model()
-        return print('Train data shape                 :', train_data.shape)
+        return print('Train data shape :', train_data.shape)
 
     def describe_model(self):
         bullying = 0
@@ -95,10 +91,22 @@ class LSTM_model:
         print(df)
         df.to_csv('model/TFIDF.csv')
 
+    def word2vec(self):
+        with codecs.open('clear_traincoba.csv', 'r')as f:
+            for line in f:
+                tweet = f.readlines()
+                tokenized_sent = [word_tokenize(i) for i in tweet]
+                for i in tokenized_sent:
+                    print(i)
+        model = Word2vec.Word2Vec(tokenized_sent, min_count=1, size=200)
+        print(model)
+        model.wv.save_word2vec_format('model/model_word2vecWindow.txt', binary=False)
+        word = list(model.wv.vocab)
+
     def make_model(self):
         embeddings_index = dict()
         # f = open('mymodel/idwiki_word2vec_200.model',encoding='utf-8')
-        f = open('model/TFIDF.csv')
+        f = open('model/model_word2vec.txt')
         for line in f:
             values = line.split()
             word = values[0]
@@ -114,7 +122,7 @@ class LSTM_model:
             if embedding_vector is not None:
                 embedding_matrix[i] = embedding_vector
 
-        print(embedding_matrix[1])
+        print(embedding_matrix[21])
         embed_dim = 200
         lstm_out = 196
         model = tensorflow.keras.Sequential()
@@ -187,7 +195,7 @@ class LSTM_model:
         # vectorizing the tweet by the pre-fitted tokenizer instance
         twt = tokenizer2.texts_to_sequences(twt)
         # padding the tweet to have exactly the same shape as `embedding_2` input
-        twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
+        twt = pad_sequences(twt, maxlen=110, dtype='int32', value=0)
         print(twt)
 
         sentiment = self.model.predict(twt,batch_size=1, verbose=2)[0]
@@ -222,7 +230,7 @@ class LSTM_model:
         # vectorizing the tweet by the pre-fitted tokenizer instance
         twt = tokenizer2.texts_to_sequences(twt)
         # padding the tweet to have exactly the same shape as `embedding_2` input
-        twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
+        twt = pad_sequences(twt, maxlen=110, dtype='int32', value=0)
         print(twt)
 
         sentiment = self.model.predict(twt,batch_size=1, verbose=2)[0]
@@ -248,7 +256,7 @@ class LSTM_model:
         # vectorizing the tweet by the pre-fitted tokenizer instance
         twt = tokenizer2.texts_to_sequences(array)
         # padding the tweet to have exactly the same shape as `embedding_2` input
-        twt = pad_sequences(twt, maxlen=112, dtype='int32', value=0)
+        twt = pad_sequences(twt, maxlen=110, dtype='int32', value=0)
         print(twt)
 
         sentiment = self.model.predict(twt, batch_size=1, verbose=2)[0]

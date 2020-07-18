@@ -98,6 +98,12 @@ def normalisasi_words(text):
     return ' '.join(transformed_word_list)
 
 def stemming(text):
+    stopword = ['ke', 'di', 'yang', 'nya', 'lho', 'dong',
+                'dan', 'dari', 'mah', 'huh', 'eh', 'nah',
+                'kan', 'deh', 'ih', 'a', 'ih', 'ya', 'iya','sih']
+    word_list = text.split()
+    text = ' '.join([i for i in word_list if i not in stopword])
+    print(text)
     factory=StemmerFactory()
     stemmer=factory.create_stemmer()
     output=stemmer.stem(text)
